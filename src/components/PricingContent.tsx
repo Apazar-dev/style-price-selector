@@ -3,6 +3,12 @@ import PricingCard from '@/components/PricingCard';
 import { Button } from '@/components/ui/button';
 import { X, Edit2 } from 'lucide-react';
 
+interface Feature {
+  text: string;
+  status: 'included' | 'excluded' | 'unavailable';
+  details?: string[];
+}
+
 interface SelectedProduct {
   id: string;
   title: string;
@@ -23,35 +29,35 @@ const PricingContent = () => {
     price: 900,
     features: [{
       text: '1 format au choix',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Accompagnement stratégique',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Rédaction des scripts ou trames',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Tournage possible dans 3 lieux :',
-      status: 'included',
+      status: 'included' as const,
       details: ['Dans nos studios à Paris', 'Dans vos locaux (en France métropolitaine)', 'En extérieur (en France métropolitaine)']
     }, {
       text: 'Tournage de 30min',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Incarnation par vous ou par des acteurs (+200€)',
-      status: 'unavailable'
+      status: 'unavailable' as const
     }, {
       text: 'Montage de qualité',
-      status: 'unavailable'
+      status: 'unavailable' as const
     }, {
       text: '3 salves de révisions',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Garantie de vues',
-      status: 'excluded'
+      status: 'excluded' as const
     }, {
       text: 'Analyse des performances et reporting complet',
-      status: 'excluded'
+      status: 'excluded' as const
     }]
   }, {
     id: 'standard',
@@ -60,35 +66,35 @@ const PricingContent = () => {
     price: 1700,
     features: [{
       text: '1 format au choix',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Accompagnement stratégique',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Rédaction des scripts ou trames',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Tournage possible dans 3 lieux :',
-      status: 'included',
+      status: 'included' as const,
       details: ['Dans nos studios à Paris', 'Dans vos locaux (en France métropolitaine)', 'En extérieur (en France métropolitaine)']
     }, {
       text: 'Tournage de 1h',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Incarnation par vous ou par des acteurs (+200€)',
-      status: 'unavailable'
+      status: 'unavailable' as const
     }, {
       text: 'Montage de qualité',
-      status: 'unavailable'
+      status: 'unavailable' as const
     }, {
       text: 'Révisions illimitées',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: '100k vues garanties',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Analyse des performances et reporting complet',
-      status: 'excluded'
+      status: 'excluded' as const
     }]
   }, {
     id: 'premium',
@@ -99,35 +105,35 @@ const PricingContent = () => {
     isPopular: true,
     features: [{
       text: '1 format au choix',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Accompagnement stratégique',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Rédaction des scripts ou trames',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Tournage possible dans 3 lieux :',
-      status: 'included',
+      status: 'included' as const,
       details: ['Dans nos studios à Paris', 'Dans vos locaux (en France métropolitaine)', 'En extérieur (en France métropolitaine)']
     }, {
       text: 'Tournage de 2h',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Incarnation par vous ou par des acteurs (+200€)',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Montage de qualité',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Révisions illimitées',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: '200k vues garanties',
-      status: 'included'
+      status: 'included' as const
     }, {
       text: 'Analyse des performances et reporting complet',
-      status: 'included'
+      status: 'included' as const
     }]
   }];
 
