@@ -126,18 +126,16 @@ const PricingCard = ({
                 ) : null}
               </div>
               <div className={`ml-3 text-sm ${
-                isPopular 
-                  ? feature.status === 'unavailable'
-                    ? 'text-white opacity-50'
-                    : 'text-white'
-                  : feature.status === 'included'
-                    ? 'text-gray-900'
-                    : feature.status === 'excluded'
-                      ? 'text-gray-400'
-                      : 'text-gray-400'
+                feature.status === 'included'
+                  ? isPopular 
+                    ? 'text-white'
+                    : 'text-gray-900'
+                  : feature.status === 'excluded'
+                    ? 'text-red-400 opacity-40'
+                    : 'text-gray-300 opacity-30'
               }`}>
                 <p className={feature.status === 'excluded' ? 'line-through' : ''}>
-                  {feature.text}
+                  {feature.status === 'included' ? feature.text : ''}
                 </p>
                 {feature.details && feature.status === 'included' && (
                   <ul className={`mt-1 ml-4 list-disc space-y-1 ${

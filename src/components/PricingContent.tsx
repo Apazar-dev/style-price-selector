@@ -21,6 +21,7 @@ const PricingContent = () => {
   const [productFormats, setProductFormats] = useState<{
     [key: string]: string;
   }>({});
+  const [selectionMode, setSelectionMode] = useState(false);
 
   const pricingPlans = [{
     id: 'basic',
@@ -166,6 +167,9 @@ const PricingContent = () => {
       };
       setSelectedProducts(prev => [...prev, newProduct]);
     }
+
+    // Désactiver le mode sélection après avoir sélectionné
+    setSelectionMode(false);
   };
 
   const removeProduct = (productId: string) => {
@@ -186,27 +190,33 @@ const PricingContent = () => {
 
   const totalPrice = selectedProducts.reduce((sum, product) => sum + product.price, 0);
 
-  const addSecondProduct = () => {
-    const availableProduct = pricingPlans.find(plan => 
+  const enableSelectionMode = () => {
+    setSelectionMode(true);
+  };
+
+  const getAvailableProductsCount = () => {
+    return pricingPlans.filter(plan => 
       !selectedProducts.some(selected => selected.id === plan.id)
-    );
-    if (availableProduct) {
-      const format = productFormats[availableProduct.id] || 'micro-trottoir';
-      const newProduct: SelectedProduct = {
-        id: availableProduct.id,
-        title: availableProduct.title,
-        price: availableProduct.price,
-        format: format
-      };
-      setSelectedProducts(prev => [...prev, newProduct]);
-    }
+    ).length;
   };
 
   return (
     <div className="space-y-8">
       <div className="text-center">
-        
-        
+        {selectionMode && (
+          <div className="mb-6 p-4 bg-turquoise-light/10 rounded-lg border border-turquoise-light">
+            <p className="text-turquoise-dark font-medium">
+              Sélectionnez un produit supplémentaire en cliquant sur "Sélectionner ce pack"
+            </p>
+            <Button 
+              onClick={() => setSelectionMode(false)} 
+              variant="outline" 
+              className="mt-2 text-sm"
+            >
+              Annuler
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
@@ -275,10 +285,10 @@ const PricingContent = () => {
             <span className="text-3xl font-bold text-turquoise-dark">{totalPrice}€</span>
           </div>
 
-          {selectedProducts.length < 3 && (
+          {selectedProducts.length < 3 && getAvailableProductsCount() > 0 && (
             <div className="text-center mt-6">
               <Button 
-                onClick={addSecondProduct} 
+                onClick={enableSelectionMode} 
                 className="bg-turquoise-light hover:bg-turquoise-dark text-white px-6 py-3 rounded-full"
               >
                 Sélectionner un produit supplémentaire
