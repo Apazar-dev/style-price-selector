@@ -102,7 +102,6 @@ const PricingContent = () => {
     title: '10 vidéos',
     subtitle: '200k vues garanties et analyse poussée des résultats',
     price: 2300,
-    originalPrice: 2500,
     isPopular: true,
     features: [{
       text: '1 format au choix',
