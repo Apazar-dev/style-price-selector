@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PricingCard from '@/components/PricingCard';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ interface SelectedProduct {
 }
 
 const PricingContent = () => {
-  const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<SelectedProduct | null>(null);
   const [productFormats, setProductFormats] = useState<{
     [key: string]: string;
   }>({});
@@ -143,62 +144,38 @@ const PricingContent = () => {
       [planId]: format
     }));
 
-    // Mettre à jour le format du produit s'il est déjà sélectionné
-    setSelectedProducts(prev => prev.map(product => 
-      product.id === planId 
-        ? { ...product, format }
-        : product
-    ));
+    // Mettre à jour le format du produit s'il est sélectionné
+    if (selectedProduct && selectedProduct.id === planId) {
+      setSelectedProduct(prev => prev ? { ...prev, format } : null);
+    }
   };
 
   const handleProductSelect = (plan: any) => {
     const format = productFormats[plan.id] || 'micro-trottoir';
-    const productExists = selectedProducts.some(p => p.id === plan.id);
+    const isCurrentlySelected = selectedProduct?.id === plan.id;
     
-    if (productExists) {
-      setSelectedProducts(prev => prev.filter(p => p.id !== plan.id));
+    if (isCurrentlySelected) {
+      // Désélectionner le produit actuel
+      setSelectedProduct(null);
     } else {
+      // Sélectionner le nouveau produit (remplace l'ancien s'il y en a un)
       const newProduct: SelectedProduct = {
         id: plan.id,
         title: plan.title,
         price: plan.price,
         format: format
       };
-      setSelectedProducts(prev => [...prev, newProduct]);
+      setSelectedProduct(newProduct);
     }
   };
 
-  const removeProduct = (productId: string) => {
-    setSelectedProducts(prev => prev.filter(p => p.id !== productId));
-  };
-
-  const updateProductFormat = (productId: string, newFormat: string) => {
-    setSelectedProducts(prev => prev.map(product => 
-      product.id === productId 
-        ? { ...product, format: newFormat }
-        : product
-    ));
-    setProductFormats(prev => ({
-      ...prev,
-      [productId]: newFormat
-    }));
-  };
-
-  const totalPrice = selectedProducts.reduce((sum, product) => sum + product.price, 0);
-
-  const addSecondProduct = () => {
-    const availableProduct = pricingPlans.find(plan => 
-      !selectedProducts.some(selected => selected.id === plan.id)
-    );
-    if (availableProduct) {
-      const format = productFormats[availableProduct.id] || 'micro-trottoir';
-      const newProduct: SelectedProduct = {
-        id: availableProduct.id,
-        title: availableProduct.title,
-        price: availableProduct.price,
-        format: format
-      };
-      setSelectedProducts(prev => [...prev, newProduct]);
+  const updateProductFormat = (newFormat: string) => {
+    if (selectedProduct) {
+      setSelectedProduct(prev => prev ? { ...prev, format: newFormat } : null);
+      setProductFormats(prev => ({
+        ...prev,
+        [selectedProduct.id]: newFormat
+      }));
     }
   };
 
@@ -221,70 +198,57 @@ const PricingContent = () => {
             isPopular={plan.isPopular}
             onFormatChange={format => handleFormatChange(plan.id, format)}
             selectedFormat={productFormats[plan.id] || 'micro-trottoir'}
-            isSelected={selectedProducts.some(p => p.id === plan.id)}
+            isSelected={selectedProduct?.id === plan.id}
             onSelect={() => handleProductSelect(plan)}
           />
         ))}
       </div>
 
-      {selectedProducts.length > 0 && (
+      {selectedProduct && (
         <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
           <h3 className="text-2xl font-bold text-turquoise-dark mb-6 text-center">
             Votre sélection
           </h3>
           
-          <div className="space-y-4 mb-6">
-            {selectedProducts.map(product => (
-              <div key={product.id} className="flex justify-between items-center py-3 border-b border-gray-200">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">{product.title}</h4>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm text-gray-600">Format: {product.format}</span>
-                    <button
-                      onClick={() => {
-                        const newFormat = product.format === 'micro-trottoir' 
-                          ? 'scripte' 
-                          : product.format === 'scripte' 
-                            ? 'interview' 
-                            : 'micro-trottoir';
-                        updateProductFormat(product.id, newFormat);
-                      }}
-                      className="text-turquoise-dark hover:text-turquoise-light transition-colors"
-                      title="Modifier le format"
-                    >
-                      <Edit2 size={14} />
-                    </button>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-bold text-turquoise-dark">{product.price}€</span>
+          <div className="py-4 border-b border-gray-200">
+            <div className="flex justify-between items-center">
+              <div className="flex-1">
+                <h4 className="font-medium text-gray-900">{selectedProduct.title}</h4>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-sm text-gray-600">Format: {selectedProduct.format}</span>
                   <button
-                    onClick={() => removeProduct(product.id)}
-                    className="text-red-500 hover:text-red-700 transition-colors"
-                    title="Supprimer"
+                    onClick={() => {
+                      const newFormat = selectedProduct.format === 'micro-trottoir' 
+                        ? 'scripte' 
+                        : selectedProduct.format === 'scripte' 
+                          ? 'interview' 
+                          : 'micro-trottoir';
+                      updateProductFormat(newFormat);
+                    }}
+                    className="text-turquoise-dark hover:text-turquoise-light transition-colors"
+                    title="Modifier le format"
                   >
-                    <X size={16} />
+                    <Edit2 size={14} />
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
-
-          <div className="flex justify-between items-center py-4 border-t-2 border-turquoise-light">
-            <span className="text-xl font-bold text-gray-900">Total:</span>
-            <span className="text-3xl font-bold text-turquoise-dark">{totalPrice}€</span>
-          </div>
-
-          {selectedProducts.length < 3 && (
-            <div className="text-center mt-6">
-              <Button 
-                onClick={addSecondProduct} 
-                className="bg-turquoise-light hover:bg-turquoise-dark text-white px-6 py-3 rounded-full"
-              >
-                Sélectionner un produit supplémentaire
-              </Button>
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-turquoise-dark">{selectedProduct.price}€</span>
+                <button
+                  onClick={() => setSelectedProduct(null)}
+                  className="text-red-500 hover:text-red-700 transition-colors"
+                  title="Désélectionner"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
-          )}
+          </div>
+
+          <div className="flex justify-between items-center py-4 border-t-2 border-turquoise-light mt-4">
+            <span className="text-xl font-bold text-gray-900">Prix:</span>
+            <span className="text-3xl font-bold text-turquoise-dark">{selectedProduct.price}€</span>
+          </div>
 
           <div className="text-center mt-8">
             <Button className="bg-turquoise-dark hover:bg-turquoise-light text-white px-12 py-4 text-lg rounded-full">
