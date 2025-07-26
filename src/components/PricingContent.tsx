@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import PricingCard from '@/components/PricingCard';
 import { Button } from '@/components/ui/button';
+import { X, Edit2 } from 'lucide-react';
+
 interface SelectedProduct {
   id: string;
   title: string;
   price: number;
   format: string;
 }
+
 const PricingContent = () => {
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
   const [productFormats, setProductFormats] = useState<{
     [key: string]: string;
   }>({});
+
   const pricingPlans = [{
     id: 'basic',
     title: '3 vidéos',
@@ -19,35 +23,35 @@ const PricingContent = () => {
     price: 900,
     features: [{
       text: '1 format au choix',
-      included: true
+      status: 'included'
     }, {
       text: 'Accompagnement stratégique',
-      included: true
+      status: 'included'
     }, {
       text: 'Rédaction des scripts ou trames',
-      included: true
+      status: 'included'
     }, {
       text: 'Tournage possible dans 3 lieux :',
-      included: true,
+      status: 'included',
       details: ['Dans nos studios à Paris', 'Dans vos locaux (en France métropolitaine)', 'En extérieur (en France métropolitaine)']
     }, {
       text: 'Tournage de 30min',
-      included: true
+      status: 'included'
     }, {
       text: 'Incarnation par vous ou par des acteurs (+200€)',
-      included: false
+      status: 'unavailable'
     }, {
       text: 'Montage de qualité',
-      included: false
+      status: 'unavailable'
     }, {
       text: '3 salves de révisions',
-      included: true
+      status: 'included'
     }, {
       text: 'Garantie de vues',
-      included: false
+      status: 'excluded'
     }, {
       text: 'Analyse des performances et reporting complet',
-      included: false
+      status: 'excluded'
     }]
   }, {
     id: 'standard',
@@ -56,35 +60,35 @@ const PricingContent = () => {
     price: 1700,
     features: [{
       text: '1 format au choix',
-      included: true
+      status: 'included'
     }, {
       text: 'Accompagnement stratégique',
-      included: true
+      status: 'included'
     }, {
       text: 'Rédaction des scripts ou trames',
-      included: true
+      status: 'included'
     }, {
       text: 'Tournage possible dans 3 lieux :',
-      included: true,
+      status: 'included',
       details: ['Dans nos studios à Paris', 'Dans vos locaux (en France métropolitaine)', 'En extérieur (en France métropolitaine)']
     }, {
       text: 'Tournage de 1h',
-      included: true
+      status: 'included'
     }, {
       text: 'Incarnation par vous ou par des acteurs (+200€)',
-      included: false
+      status: 'unavailable'
     }, {
       text: 'Montage de qualité',
-      included: false
+      status: 'unavailable'
     }, {
       text: 'Révisions illimitées',
-      included: true
+      status: 'included'
     }, {
       text: '100k vues garanties',
-      included: true
+      status: 'included'
     }, {
       text: 'Analyse des performances et reporting complet',
-      included: false
+      status: 'excluded'
     }]
   }, {
     id: 'premium',
@@ -95,46 +99,56 @@ const PricingContent = () => {
     isPopular: true,
     features: [{
       text: '1 format au choix',
-      included: true
+      status: 'included'
     }, {
       text: 'Accompagnement stratégique',
-      included: true
+      status: 'included'
     }, {
       text: 'Rédaction des scripts ou trames',
-      included: true
+      status: 'included'
     }, {
       text: 'Tournage possible dans 3 lieux :',
-      included: true,
+      status: 'included',
       details: ['Dans nos studios à Paris', 'Dans vos locaux (en France métropolitaine)', 'En extérieur (en France métropolitaine)']
     }, {
       text: 'Tournage de 2h',
-      included: true
+      status: 'included'
     }, {
       text: 'Incarnation par vous ou par des acteurs (+200€)',
-      included: true
+      status: 'included'
     }, {
       text: 'Montage de qualité',
-      included: true
+      status: 'included'
     }, {
       text: 'Révisions illimitées',
-      included: true
+      status: 'included'
     }, {
       text: '200k vues garanties',
-      included: true
+      status: 'included'
     }, {
       text: 'Analyse des performances et reporting complet',
-      included: true
+      status: 'included'
     }]
   }];
+
   const handleFormatChange = (planId: string, format: string) => {
     setProductFormats(prev => ({
       ...prev,
       [planId]: format
     }));
+
+    // Mettre à jour le format du produit s'il est déjà sélectionné
+    setSelectedProducts(prev => prev.map(product => 
+      product.id === planId 
+        ? { ...product, format }
+        : product
+    ));
   };
+
   const handleProductSelect = (plan: any) => {
     const format = productFormats[plan.id] || 'micro-trottoir';
     const productExists = selectedProducts.some(p => p.id === plan.id);
+    
     if (productExists) {
       setSelectedProducts(prev => prev.filter(p => p.id !== plan.id));
     } else {
@@ -147,9 +161,29 @@ const PricingContent = () => {
       setSelectedProducts(prev => [...prev, newProduct]);
     }
   };
+
+  const removeProduct = (productId: string) => {
+    setSelectedProducts(prev => prev.filter(p => p.id !== productId));
+  };
+
+  const updateProductFormat = (productId: string, newFormat: string) => {
+    setSelectedProducts(prev => prev.map(product => 
+      product.id === productId 
+        ? { ...product, format: newFormat }
+        : product
+    ));
+    setProductFormats(prev => ({
+      ...prev,
+      [productId]: newFormat
+    }));
+  };
+
   const totalPrice = selectedProducts.reduce((sum, product) => sum + product.price, 0);
+
   const addSecondProduct = () => {
-    const availableProduct = pricingPlans.find(plan => !selectedProducts.some(selected => selected.id === plan.id));
+    const availableProduct = pricingPlans.find(plan => 
+      !selectedProducts.some(selected => selected.id === plan.id)
+    );
     if (availableProduct) {
       const format = productFormats[availableProduct.id] || 'micro-trottoir';
       const newProduct: SelectedProduct = {
@@ -161,29 +195,73 @@ const PricingContent = () => {
       setSelectedProducts(prev => [...prev, newProduct]);
     }
   };
-  return <div className="space-y-8">
+
+  return (
+    <div className="space-y-8">
       <div className="text-center">
         
         
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {pricingPlans.map(plan => <PricingCard key={plan.id} title={plan.title} subtitle={plan.subtitle} price={plan.price} originalPrice={plan.originalPrice} features={plan.features} isPopular={plan.isPopular} onFormatChange={format => handleFormatChange(plan.id, format)} selectedFormat={productFormats[plan.id] || 'micro-trottoir'} isSelected={selectedProducts.some(p => p.id === plan.id)} onSelect={() => handleProductSelect(plan)} />)}
+        {pricingPlans.map(plan => (
+          <PricingCard
+            key={plan.id}
+            title={plan.title}
+            subtitle={plan.subtitle}
+            price={plan.price}
+            originalPrice={plan.originalPrice}
+            features={plan.features}
+            isPopular={plan.isPopular}
+            onFormatChange={format => handleFormatChange(plan.id, format)}
+            selectedFormat={productFormats[plan.id] || 'micro-trottoir'}
+            isSelected={selectedProducts.some(p => p.id === plan.id)}
+            onSelect={() => handleProductSelect(plan)}
+          />
+        ))}
       </div>
 
-      {selectedProducts.length > 0 && <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+      {selectedProducts.length > 0 && (
+        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
           <h3 className="text-2xl font-bold text-turquoise-dark mb-6 text-center">
             Votre sélection
           </h3>
           
           <div className="space-y-4 mb-6">
-            {selectedProducts.map(product => <div key={product.id} className="flex justify-between items-center py-3 border-b border-gray-200">
-                <div>
+            {selectedProducts.map(product => (
+              <div key={product.id} className="flex justify-between items-center py-3 border-b border-gray-200">
+                <div className="flex-1">
                   <h4 className="font-medium text-gray-900">{product.title}</h4>
-                  <p className="text-sm text-gray-600">Format: {product.format}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-sm text-gray-600">Format: {product.format}</span>
+                    <button
+                      onClick={() => {
+                        const newFormat = product.format === 'micro-trottoir' 
+                          ? 'scripte' 
+                          : product.format === 'scripte' 
+                            ? 'interview' 
+                            : 'micro-trottoir';
+                        updateProductFormat(product.id, newFormat);
+                      }}
+                      className="text-turquoise-dark hover:text-turquoise-light transition-colors"
+                      title="Modifier le format"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                  </div>
                 </div>
-                <span className="font-bold text-turquoise-dark">{product.price}€</span>
-              </div>)}
+                <div className="flex items-center gap-3">
+                  <span className="font-bold text-turquoise-dark">{product.price}€</span>
+                  <button
+                    onClick={() => removeProduct(product.id)}
+                    className="text-red-500 hover:text-red-700 transition-colors"
+                    title="Supprimer"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="flex justify-between items-center py-4 border-t-2 border-turquoise-light">
@@ -191,18 +269,26 @@ const PricingContent = () => {
             <span className="text-3xl font-bold text-turquoise-dark">{totalPrice}€</span>
           </div>
 
-          {selectedProducts.length < 3 && <div className="text-center mt-6">
-              <Button onClick={addSecondProduct} className="bg-turquoise-light hover:bg-turquoise-dark text-white px-6 py-3 rounded-full">
+          {selectedProducts.length < 3 && (
+            <div className="text-center mt-6">
+              <Button 
+                onClick={addSecondProduct} 
+                className="bg-turquoise-light hover:bg-turquoise-dark text-white px-6 py-3 rounded-full"
+              >
                 Sélectionner un produit supplémentaire
               </Button>
-            </div>}
+            </div>
+          )}
 
           <div className="text-center mt-8">
             <Button className="bg-turquoise-dark hover:bg-turquoise-light text-white px-12 py-4 text-lg rounded-full">
               Commencer mon projet
             </Button>
           </div>
-        </div>}
-    </div>;
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default PricingContent;
