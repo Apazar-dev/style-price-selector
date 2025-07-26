@@ -127,16 +127,10 @@ const PricingCard = ({
               </div>
               <div className={`ml-3 text-sm ${
                 isPopular 
-                  ? feature.status === 'unavailable'
-                    ? 'text-white opacity-50'
-                    : 'text-white'
-                  : feature.status === 'included'
-                    ? 'text-gray-900'
-                    : feature.status === 'excluded'
-                      ? 'text-gray-400'
-                      : 'text-gray-400'
+                  ? 'text-white'
+                  : 'text-gray-900'
               }`}>
-                <p className={feature.status === 'excluded' ? 'line-through' : ''}>
+                <p>
                   {feature.text}
                 </p>
                 {feature.details && feature.status === 'included' && (
