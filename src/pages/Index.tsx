@@ -1,10 +1,10 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import PricingModal from '@/components/PricingModal';
 
 const Index = () => {
-  const navigate = useNavigate();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-turquoise-light to-turquoise-dark font-poppins">
@@ -19,14 +19,19 @@ const Index = () => {
           
           <div className="space-y-4">
             <Button 
-              onClick={() => navigate('/pricing')}
+              onClick={() => setIsPricingModalOpen(true)}
               className="bg-white text-turquoise-dark hover:bg-gray-100 px-8 py-4 text-lg rounded-full font-medium"
             >
-              Découvrir nos tarifs
+              Nouvelle commande
             </Button>
           </div>
         </div>
       </div>
+
+      <PricingModal 
+        isOpen={isPricingModalOpen} 
+        onClose={() => setIsPricingModalOpen(false)} 
+      />
     </div>
   );
 };
