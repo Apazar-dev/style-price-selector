@@ -17,8 +17,8 @@ const mockOrders: Order[] = [{
   client: 'TechCorp',
   videoCount: 5,
   format: 'scripté',
-  startDate: new Date(2024, 7, 1),
-  // 1er août 2024
+  startDate: new Date(2025, 7, 1),
+  // 1er août 2025
   color: 'bg-red-500'
 }, {
   id: '2',
@@ -26,8 +26,8 @@ const mockOrders: Order[] = [{
   client: 'StartupXYZ',
   videoCount: 3,
   format: 'interview',
-  startDate: new Date(2024, 7, 8),
-  // 8 août 2024
+  startDate: new Date(2025, 7, 8),
+  // 8 août 2025
   color: 'bg-blue-500'
 }, {
   id: '3',
@@ -35,8 +35,8 @@ const mockOrders: Order[] = [{
   client: 'RetailPlus',
   videoCount: 8,
   format: 'micro-trottoir',
-  startDate: new Date(2024, 7, 12),
-  // 12 août 2024
+  startDate: new Date(2025, 7, 12),
+  // 12 août 2025
   color: 'bg-yellow-500'
 }, {
   id: '4',
@@ -44,8 +44,8 @@ const mockOrders: Order[] = [{
   client: 'EducaGroup',
   videoCount: 4,
   format: 'scripté',
-  startDate: new Date(2024, 7, 20),
-  // 20 août 2024
+  startDate: new Date(2025, 7, 20),
+  // 20 août 2025
   color: 'bg-red-500'
 }, {
   id: '5',
@@ -53,8 +53,8 @@ const mockOrders: Order[] = [{
   client: 'CreativeAgency',
   videoCount: 2,
   format: 'personnalisé',
-  startDate: new Date(2024, 7, 28),
-  // 28 août 2024
+  startDate: new Date(2025, 7, 28),
+  // 28 août 2025
   color: 'bg-green-500'
 }, {
   id: '6',
@@ -62,12 +62,12 @@ const mockOrders: Order[] = [{
   client: 'MediaGroup',
   videoCount: 6,
   format: 'interview',
-  startDate: new Date(2024, 8, 5),
-  // 5 septembre 2024
+  startDate: new Date(2025, 8, 5),
+  // 5 septembre 2025
   color: 'bg-blue-500'
 }];
 const CalendarView = () => {
-  const [currentDate, setCurrentDate] = useState(new Date(2024, 7, 1)); // Août 2024
+  const [currentDate, setCurrentDate] = useState(new Date(2025, 7, 1)); // Août 2025
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
 
   const getDaysInMonth = (date: Date) => {
