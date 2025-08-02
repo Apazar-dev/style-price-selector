@@ -50,6 +50,7 @@ const mockOrders: Order[] = [{
 }];
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date(2024, 7, 1)); // Août 2024
+  const [expandedDay, setExpandedDay] = useState<number | null>(null);
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -120,13 +121,34 @@ const CalendarView = () => {
       }, (_, i) => {
         const day = i + 1;
         const ordersForDay = getOrdersForDay(day);
-        return <div key={day} className="h-24 border border-gray-200 p-1 relative">
+        const isExpanded = expandedDay === day;
+        const displayedOrders = isExpanded ? ordersForDay : ordersForDay.slice(0, 2);
+        
+        return <div 
+              key={day} 
+              className={`border border-gray-200 p-1 relative transition-all duration-200 ${
+                isExpanded ? 'h-auto min-h-32 z-10 bg-white shadow-lg' : 'h-24'
+              }`}
+            >
               <div className="text-sm font-medium text-gray-900 mb-1">{day}</div>
               <div className="space-y-1">
-                {ordersForDay.slice(0, 2).map(order => <OrderBlock key={order.id} order={order} isCompact />)}
-                {ordersForDay.length > 2 && <div className="text-xs text-gray-500">
+                {displayedOrders.map(order => <OrderBlock key={order.id} order={order} isCompact />)}
+                {ordersForDay.length > 2 && !isExpanded && (
+                  <button 
+                    onClick={() => setExpandedDay(day)}
+                    className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer underline"
+                  >
                     +{ordersForDay.length - 2} autres
-                  </div>}
+                  </button>
+                )}
+                {isExpanded && (
+                  <button 
+                    onClick={() => setExpandedDay(null)}
+                    className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer underline"
+                  >
+                    Réduire
+                  </button>
+                )}
               </div>
             </div>;
       })}
