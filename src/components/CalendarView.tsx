@@ -7,7 +7,7 @@ interface Order {
   name: string;
   client: string;
   videoCount: number;
-  format: 'scripté' | 'interview' | 'micro-trottoir';
+  format: 'scripté' | 'interview' | 'micro-trottoir' | 'personnalisé';
   startDate: Date;
   color: string;
 }
@@ -19,7 +19,7 @@ const mockOrders: Order[] = [{
   format: 'scripté',
   startDate: new Date(2024, 7, 5),
   // 5 août 2024
-  color: 'bg-teal-500'
+  color: 'bg-red-500'
 }, {
   id: '2',
   name: 'Interview CEO',
@@ -37,7 +37,7 @@ const mockOrders: Order[] = [{
   format: 'micro-trottoir',
   startDate: new Date(2024, 7, 25),
   // 25 août 2024
-  color: 'bg-purple-500'
+  color: 'bg-yellow-500'
 }, {
   id: '4',
   name: 'Formation Interne',
@@ -46,6 +46,15 @@ const mockOrders: Order[] = [{
   format: 'scripté',
   startDate: new Date(2024, 8, 10),
   // 10 septembre 2024
+  color: 'bg-red-500'
+}, {
+  id: '5',
+  name: 'Projet Spécial',
+  client: 'CreativeAgency',
+  videoCount: 2,
+  format: 'personnalisé',
+  startDate: new Date(2024, 8, 1),
+  // 1er septembre 2024
   color: 'bg-green-500'
 }];
 const CalendarView = () => {
@@ -155,7 +164,28 @@ const CalendarView = () => {
       </div>
 
       {/* Légende */}
-      
+      <div className="mt-6 border-t pt-4">
+        <h3 className="text-sm font-medium text-gray-900 mb-3">Formats de vidéo</h3>
+        <div className="flex flex-wrap gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-red-500 rounded"></div>
+            <span className="text-sm text-gray-600">Scripté</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-blue-500 rounded"></div>
+            <span className="text-sm text-gray-600">Interview</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+            <span className="text-sm text-gray-600">Micro-trottoir</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded"></div>
+            <span className="text-sm text-gray-600">Personnalisé</span>
+          </div>
+        </div>
+      </div>
+    
     </div>;
 };
 export default CalendarView;

@@ -6,7 +6,7 @@ interface Order {
   name: string;
   client: string;
   videoCount: number;
-  format: 'scripté' | 'interview' | 'micro-trottoir';
+  format: 'scripté' | 'interview' | 'micro-trottoir' | 'personnalisé';
   startDate: Date;
   color: string;
 }
@@ -20,7 +20,8 @@ const OrderBlock = ({ order, isCompact = false }: OrderBlockProps) => {
   const formatLabels = {
     'scripté': 'Scripté',
     'interview': 'Interview',
-    'micro-trottoir': 'Micro-trottoir'
+    'micro-trottoir': 'Micro-trottoir',
+    'personnalisé': 'Personnalisé'
   };
 
   const endDate = new Date(order.startDate);
