@@ -192,7 +192,6 @@ const PricingContent = () => {
             title={plan.title}
             subtitle={plan.subtitle}
             price={plan.price}
-            originalPrice={plan.originalPrice}
             features={plan.features}
             isPopular={plan.isPopular}
             onFormatChange={format => handleFormatChange(plan.id, format)}

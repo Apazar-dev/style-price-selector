@@ -1,0 +1,179 @@
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import OrderBlock from './OrderBlock';
+
+interface Order {
+  id: string;
+  name: string;
+  client: string;
+  videoCount: number;
+  format: 'scripté' | 'interview' | 'micro-trottoir';
+  startDate: Date;
+  color: string;
+}
+
+const mockOrders: Order[] = [
+  {
+    id: '1',
+    name: 'Campagne Produit A',
+    client: 'TechCorp',
+    videoCount: 5,
+    format: 'scripté',
+    startDate: new Date(2024, 7, 5), // 5 août 2024
+    color: 'bg-teal-500'
+  },
+  {
+    id: '2',
+    name: 'Interview CEO',
+    client: 'StartupXYZ',
+    videoCount: 3,
+    format: 'interview',
+    startDate: new Date(2024, 7, 15), // 15 août 2024
+    color: 'bg-blue-500'
+  },
+  {
+    id: '3',
+    name: 'Enquête Client',
+    client: 'RetailPlus',
+    videoCount: 8,
+    format: 'micro-trottoir',
+    startDate: new Date(2024, 7, 25), // 25 août 2024
+    color: 'bg-purple-500'
+  },
+  {
+    id: '4',
+    name: 'Formation Interne',
+    client: 'EducaGroup',
+    videoCount: 4,
+    format: 'scripté',
+    startDate: new Date(2024, 8, 10), // 10 septembre 2024
+    color: 'bg-green-500'
+  }
+];
+
+const CalendarView = () => {
+  const [currentDate, setCurrentDate] = useState(new Date(2024, 7, 1)); // Août 2024
+
+  const getDaysInMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (date: Date) => {
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    return firstDay === 0 ? 6 : firstDay - 1; // Lundi = 0
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(prev.getMonth() - 1);
+      } else {
+        newDate.setMonth(prev.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  const isOrderActiveOnDay = (order: Order, day: number, month: number, year: number) => {
+    const checkDate = new Date(year, month, day);
+    const endDate = new Date(order.startDate);
+    endDate.setDate(endDate.getDate() + 29); // 30 jours total
+    
+    return checkDate >= order.startDate && checkDate <= endDate;
+  };
+
+  const getOrdersForDay = (day: number) => {
+    return mockOrders.filter(order => 
+      isOrderActiveOnDay(order, day, currentDate.getMonth(), currentDate.getFullYear())
+    );
+  };
+
+  const daysInMonth = getDaysInMonth(currentDate);
+  const firstDayOfMonth = getFirstDayOfMonth(currentDate);
+  const monthNames = [
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  ];
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      {/* Header avec navigation */}
+      <div className="flex items-center justify-between mb-6">
+        <Button
+          variant="outline"
+          onClick={() => navigateMonth('prev')}
+          className="flex items-center gap-2"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Précédent
+        </Button>
+        
+        <h2 className="text-2xl font-semibold text-gray-900">
+          {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+        </h2>
+        
+        <Button
+          variant="outline"
+          onClick={() => navigateMonth('next')}
+          className="flex items-center gap-2"
+        >
+          Suivant
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* En-têtes des jours */}
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => (
+          <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Grille du calendrier */}
+      <div className="grid grid-cols-7 gap-1">
+        {/* Cases vides pour les jours avant le début du mois */}
+        {Array.from({ length: firstDayOfMonth }, (_, i) => (
+          <div key={`empty-${i}`} className="h-24"></div>
+        ))}
+        
+        {/* Jours du mois */}
+        {Array.from({ length: daysInMonth }, (_, i) => {
+          const day = i + 1;
+          const ordersForDay = getOrdersForDay(day);
+          
+          return (
+            <div key={day} className="h-24 border border-gray-200 p-1 relative">
+              <div className="text-sm font-medium text-gray-900 mb-1">{day}</div>
+              <div className="space-y-1">
+                {ordersForDay.slice(0, 2).map(order => (
+                  <OrderBlock key={order.id} order={order} isCompact />
+                ))}
+                {ordersForDay.length > 2 && (
+                  <div className="text-xs text-gray-500">
+                    +{ordersForDay.length - 2} autres
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Légende */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h3 className="col-span-full text-lg font-semibold text-gray-900 mb-4">
+          Commandes en cours
+        </h3>
+        {mockOrders.map(order => (
+          <OrderBlock key={order.id} order={order} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default CalendarView;
